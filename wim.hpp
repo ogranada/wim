@@ -4,6 +4,14 @@
 #include <iostream>
 #include <vector>
 
+class NotSpecifiedPathException: public std::exception
+{
+  virtual const char* what() const throw()
+  {
+    return "Not specified path for file.";
+  }
+};
+
 class Chunk {
     private:
         // PRIVATE METHODS
@@ -19,6 +27,7 @@ class Chunk {
 class Wim {
 
     private:
+        std::string *filePath = NULL;
         std::vector<Chunk> buffer;
 
         // PRIVATE METHODS
@@ -30,8 +39,10 @@ class Wim {
         ~Wim();
 
         // PUBLIC METHODS
+        std::vector<Chunk> getBuffer() const;
         bool insertText(int line, int col, std::string newstr);
         void loadFile(std::string filePath);
+        void save(std::string newFilePath = "");
 
 };
 

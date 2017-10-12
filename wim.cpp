@@ -6,6 +6,8 @@
 #include <vector>
 #include <string>
 
+
+
 Chunk::Chunk(){
 }
 
@@ -32,17 +34,48 @@ Wim::Wim() {
 }
 
 void Wim::loadFile(std::string filePath) {
-    std::ifstream sourceFile;
-    std::string str;
-    sourceFile.open(filePath);
-    int c = 0;
-    while(!sourceFile.eof()) {
-        getline(sourceFile, str);
-        Chunk chunk = {str};
-        this->buffer.push_back(chunk);
-        c++;
+    try {
+        std::ifstream sourceFile;
+        std::string str;
+        sourceFile.open(filePath);
+        int c = 0;
+        while(!sourceFile.eof()) {
+            getline(sourceFile, str);
+            Chunk chunk = {str};
+            this->buffer.push_back(chunk);
+            c++;
+        }
+        sourceFile.close();
+        this->filePath = &filePath;
+    } catch(std::exception &e) {
+        std::cerr << e.what() << std::endl;
     }
-    sourceFile.close();
+}
+
+void Wim::save(std::string newFilePath) {
+    std::string targetFilePath;
+    if(newFilePath.compare("") != 0) {
+        targetFilePath = newFilePath;
+    } else {
+        if(this->filePath == NULL) {
+            NotSpecifiedPathException ex;
+            throw ex;
+        } else {
+            targetFilePath = *(this->filePath);
+        }
+    }
+    std::ofstream file;
+    file.open(targetFilePath);
+    bool first = true;
+    for(auto const& chunk: this->getBuffer()) {
+        if(!first) {
+            file << "\n";
+        } else {
+            first = false;
+        }
+        file << chunk.line;
+    }
+    file.close();
 }
 
 Wim::Wim(std::string str) {
@@ -69,9 +102,13 @@ bool Wim::insertText(int line, int col, std::string str) {
     return false;
 }
 
+std::vector<Chunk> Wim::getBuffer() const {
+    return buffer;
+}
+
 std::ostream& operator<< (std::ostream& stream, const Wim wim) {
     bool first = true;
-    for(auto const& chunk: wim.buffer) {
+    for(auto const& chunk: wim.getBuffer()) {
         if(!first) {
             stream << "\n";
         } else {
