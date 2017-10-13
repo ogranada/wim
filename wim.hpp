@@ -12,6 +12,7 @@ class NotSpecifiedPathException: public std::exception
   }
 };
 
+
 class Chunk {
     private:
         // PRIVATE METHODS
@@ -24,26 +25,46 @@ class Chunk {
         Chunk* insert(int column, std::string newstr);
 };
 
-class Wim {
+class WimContent {
 
     private:
         std::string *filePath = NULL;
         std::vector<Chunk> buffer;
 
         // PRIVATE METHODS
-        friend std::ostream& operator<< (std::ostream& stream, const Wim wim);
+        friend std::ostream& operator<< (std::ostream& stream, const WimContent wim);
 
     public:
-        Wim();
-        Wim(std::string);
-        ~Wim();
+        WimContent();
+        WimContent(std::string);
+        ~WimContent();
 
         // PUBLIC METHODS
         std::vector<Chunk> getBuffer() const;
-        bool insertText(int line, int col, std::string newstr);
+        Chunk * getLine(unsigned long);
+        // bool insertText(unsigned long line, unsigned long col, std::string newstr);
         void loadFile(std::string filePath);
         void save(std::string newFilePath = "");
 
+};
+
+class WimCursor {
+private:
+    unsigned long row;
+    unsigned long column;
+    WimContent content;
+public:
+    WimCursor();
+    WimCursor(WimContent);
+    WimCursor(unsigned long, unsigned long);
+    ~WimCursor();
+    unsigned long getRow();
+    void setRow(unsigned long);
+    unsigned long getColumn();
+    void setColumn(unsigned long);
+    WimContent getContent();
+    void setContent(WimContent);
+    bool insertText(std::string newtext);
 };
 
 #endif

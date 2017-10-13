@@ -29,11 +29,11 @@ Chunk* Chunk::insert(int column, std::string newstr) {
     return this;
 }
 
-Wim::Wim() {
+WimContent::WimContent() {
     
 }
 
-void Wim::loadFile(std::string filePath) {
+void WimContent::loadFile(std::string filePath) {
     try {
         std::ifstream sourceFile;
         std::string str;
@@ -52,7 +52,7 @@ void Wim::loadFile(std::string filePath) {
     }
 }
 
-void Wim::save(std::string newFilePath) {
+void WimContent::save(std::string newFilePath) {
     std::string targetFilePath;
     if(newFilePath.compare("") != 0) {
         targetFilePath = newFilePath;
@@ -78,7 +78,7 @@ void Wim::save(std::string newFilePath) {
     file.close();
 }
 
-Wim::Wim(std::string str) {
+WimContent::WimContent(std::string str) {
     std::istringstream f(str);
     std::string s;
     while (getline(f, s, '\n')) {
@@ -87,11 +87,13 @@ Wim::Wim(std::string str) {
     }
 }
 
-Wim::~Wim() {
+WimContent::~WimContent() {
     
 }
 
-bool Wim::insertText(int line, int col, std::string str) {
+
+/*
+bool WimContent::insertText(unsigned long line, unsigned long col, std::string str) {
     int cline = 0;
     for(Chunk &chunk: this->buffer) {
         if(cline == line) {
@@ -101,12 +103,17 @@ bool Wim::insertText(int line, int col, std::string str) {
     }
     return false;
 }
+*/
 
-std::vector<Chunk> Wim::getBuffer() const {
+std::vector<Chunk> WimContent::getBuffer() const {
     return buffer;
 }
 
-std::ostream& operator<< (std::ostream& stream, const Wim wim) {
+Chunk * WimContent::getLine(unsigned long line) {
+    return &buffer[line];
+}
+
+std::ostream& operator<< (std::ostream& stream, const WimContent wim) {
     bool first = true;
     for(auto const& chunk: wim.getBuffer()) {
         if(!first) {
@@ -118,3 +125,52 @@ std::ostream& operator<< (std::ostream& stream, const Wim wim) {
     }
     return stream;
 }
+
+
+WimCursor::WimCursor(){
+    row = 0;
+    column = 0;
+}
+
+WimCursor::WimCursor(unsigned long rowNumber, unsigned long columnNumber) {
+    row = rowNumber;
+    column = columnNumber;
+}
+
+WimCursor::~WimCursor() {}
+
+unsigned long WimCursor::getRow() {
+    return row;
+}
+
+void WimCursor::setRow(unsigned long rowNumber) {
+    row = rowNumber;
+}
+
+unsigned long WimCursor::getColumn(){
+    return column;
+}
+
+void WimCursor::setColumn(unsigned long columnNumber){
+    column = columnNumber;
+}
+
+WimContent WimCursor::getContent() {
+    return content;
+}
+
+void WimCursor::setContent(WimContent contentInstance) {
+    content = contentInstance;
+}
+
+bool WimCursor::insertText(std::string newtext) {
+    try {
+        std::cout << ":::" << *content.getLine(row) << std::endl;
+        content.getLine(row)->insert(column, newtext);
+        std::cout << ":::" << *content.getLine(row) << std::endl;
+        return true;
+    } catch(std::exception  &e) {
+        return false;
+    }
+}
+
