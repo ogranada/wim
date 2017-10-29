@@ -28,7 +28,7 @@ class Chunk {
 class WimContent {
 
     private:
-        std::string *filePath = NULL;
+        std::string filePath = "";
         std::vector<Chunk> buffer;
 
         // PRIVATE METHODS
@@ -43,6 +43,7 @@ class WimContent {
         std::vector<Chunk> getBuffer() const;
         Chunk * getLine(unsigned long);
         // bool insertText(unsigned long line, unsigned long col, std::string newstr);
+        void insertLine(unsigned long, Chunk);
         void loadFile(std::string filePath);
         void save(std::string newFilePath = "");
 
@@ -52,18 +53,18 @@ class WimCursor {
 private:
     unsigned long row;
     unsigned long column;
-    WimContent content;
+    WimContent *content;
 public:
     WimCursor();
-    WimCursor(WimContent);
-    WimCursor(unsigned long, unsigned long);
+    WimCursor(WimContent*);
+    WimCursor(unsigned long rowNumber, unsigned long columnNumber);
     ~WimCursor();
     unsigned long getRow();
     void setRow(unsigned long);
     unsigned long getColumn();
     void setColumn(unsigned long);
-    WimContent getContent();
-    void setContent(WimContent);
+    WimContent *getContent();
+    void setContent(WimContent*);
     bool insertText(std::string newtext);
 };
 
