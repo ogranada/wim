@@ -42,6 +42,7 @@ class WimContent {
         // PUBLIC METHODS
         std::vector<Chunk> getBuffer() const;
         Chunk * getLine(unsigned long);
+        unsigned int getLinesCount();
         // bool insertText(unsigned long line, unsigned long col, std::string newstr);
         void insertLine(unsigned long, Chunk);
         void loadFile(std::string filePath);

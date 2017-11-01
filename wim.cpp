@@ -196,11 +196,21 @@ void split(std::vector<std::string> &vect, std::string text, const char *separat
     }
 }
 
+unsigned int WimContent::getLinesCount() {
+    return buffer.size();
+}
+
 bool WimCursor::insertText(std::string newtext) {
+    print(row);
+    print(newtext);
     try {
         std::size_t found = newtext.find_first_of("\n");
         if (found == std::string::npos) { // Not have new line instances.
-            (*content).getLine(row)->insert(column, newtext);
+            if((*content).getLinesCount() >= row){
+                (*content).getLine(row)->insert(column, newtext);
+            } else {
+                // TODO: fix insertin in not existent lines.
+            }
         } else {
             std::vector<std::string> lines;
             split(lines, newtext, "\n");
